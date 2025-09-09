@@ -10,7 +10,9 @@ const signup = async (data) => {
 
         console.log(data);
 
-        const res = await axios.post(`${API_URL}/signup`, data);
+        const res = await axios.post(`${API_URL}/signup`, data, {
+            withCredentials: true
+        });
 
         return res;
     } catch (err) {
@@ -21,7 +23,9 @@ const signup = async (data) => {
 const login = async (data) => {
     try {
         console.log(data);
-        const res = await axios.post('/login', data);
+        const res = await axios.post(`${API_URL}/login`, data, {
+            withCredentials: true
+        });
         return res;
     } catch (err) {
         console.log("Error while login", err);
@@ -30,7 +34,9 @@ const login = async (data) => {
 
 const getAllProducts = async () => {
     try {
-        const res = await axios.get('/getproducts');
+        const res = await axios.get(`${API_URL}/getproducts`, {
+            withCredentials: true
+        });
         return res;
     } catch (err) {
         console.log("Error getting products", err);
@@ -39,7 +45,9 @@ const getAllProducts = async () => {
 
 const getUserCart = async () => {
     try {
-        const res = await axios.get('/getusercart');
+        const res = await axios.get(`${API_URL}/getusercart`, {
+            withCredentials: true
+        });
         return res;
     } catch (err) {
         console.log("Error while getting user cart data", err);

@@ -1,11 +1,21 @@
 import { useState } from 'react';
 import EmptyCart from './EmptyCart';
 import { cartProducts } from '../../utils/data';
+import { getUserCart } from '../../services/services';
+import { useEffect } from 'react';
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState(cartProducts);
 
   const [discount, setDiscount] = useState(1);
+
+  useEffect(() => {
+    async function initCartPage() {
+      await getUserCart();
+    }
+
+    initCartPage();
+  },[]);
 
   const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
   const shipping = subtotal > 0 ? 200 : 0;

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { NavLink, useNavigate } from "react-router";
+import { login } from '../../services/services';
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,18 +12,17 @@ const Login = () => {
     setError
   } = useForm();
 
+  const navigate = useNavigate();
+
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      console.log('Login Data:', data);
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      alert('Login successful! Redirecting...');
+      const res = await login(data);
+      if (res.status === 200) {
+        navigate('/');
+      }
     } catch (error) {
-      setError('root', {
-        type: 'manual',
-        message: 'Invalid email or password'
-      });
+
     } finally {
       setIsLoading(false);
     }
@@ -30,7 +31,7 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg">
-       
+
         <div className="text-center">
           <div className="mx-auto h-16 w-16 bg-gray-900 rounded-full flex items-center justify-center mb-4">
             <span className="text-white text-2xl font-bold">WH</span>
@@ -39,14 +40,14 @@ const Login = () => {
           <p className="mt-2 text-sm text-gray-600">Sign in to access your account</p>
         </div>
 
-     
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           {errors.root && (
             <div className="bg-red-50 text-red-700 p-3 rounded-md text-sm">
               {errors.root.message}
             </div>
           )}
-          
+
           <div className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -116,12 +117,12 @@ const Login = () => {
           <div className="text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
-              {/* <Link
+              <NavLink
                 to="/signup"
                 className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200"
               >
                 Sign up now
-              </Link> */}
+              </NavLink>
             </p>
           </div>
         </form>

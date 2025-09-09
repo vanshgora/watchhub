@@ -1,5 +1,5 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
+import { NavLink } from "react-router";
 import { signup } from '../../services/services';
 
 const Signup = () => {
@@ -16,7 +16,7 @@ const Signup = () => {
     const onSubmit = async (data) => {
         try {
             const res = await signup(data);
-        } catch(err) {
+        } catch (err) {
 
         }
     };
@@ -200,12 +200,12 @@ const Signup = () => {
                         </div>
 
                         <div className="mt-6">
-                            {/* <Link
-                to="/login"
-                className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200"
-              >
-                Sign in to existing account
-              </Link> */}
+                            <NavLink
+                                to="/login"
+                                className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200"
+                            >
+                                Sign in to existing account
+                            </NavLink>
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { mockProducts } from '../../utils/data';
 import ProductCard from '../../components/ProductCard/ProductCard';
+import { getAllProducts } from '../../services/services';
 // import { useNavigate } from 'react-router-dom';
 
 const ProductList = () => {
@@ -16,10 +16,15 @@ const ProductList = () => {
   // const navigate = useNavigate();
 
   useEffect(() => {
+    async function initProductList() {
+      const res = await getAllProducts();
+      const products = res.data.products;
+      setProducts(products);
+      setFilteredProducts(products);
+      setLoading(false);
+    }
 
-    setProducts(mockProducts);
-    setFilteredProducts(mockProducts);
-    setLoading(false);
+    initProductList();
   }, []);
 
   useEffect(() => {
@@ -73,7 +78,7 @@ const ProductList = () => {
       <div className="container mx-auto px-3">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-xl font-bold text-gray-800">WatchHub Collection</h1>
-          <button 
+          <button
             onClick={() => setShowFilters(!showFilters)}
             className="md:hidden bg-blue-600 text-white px-3 py-2 rounded-lg flex items-center"
           >
@@ -88,7 +93,7 @@ const ProductList = () => {
           <div className={`bg-white rounded-lg shadow p-4 ${showFilters ? 'block' : 'hidden'} md:block md:w-56`}>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-bold text-gray-800">Filters</h2>
-              <button 
+              <button
                 onClick={clearAllFilters}
                 className="text-sm text-blue-600 hover:text-blue-800"
               >
