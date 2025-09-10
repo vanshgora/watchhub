@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { signup } from '../../services/services';
 
 const Signup = () => {
@@ -11,11 +11,16 @@ const Signup = () => {
         reset
     } = useForm();
 
+    const navigate = useNavigate();
+
     const password = watch('password');
 
     const onSubmit = async (data) => {
         try {
             const res = await signup(data);
+            if(res.status === 200) {
+                navigate('/login');
+            }
         } catch (err) {
 
         }

@@ -1,6 +1,7 @@
 const { getDb } = require("./dbconfig");
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
+const { ObjectId } = require('mongodb');
 
 const login = async (req, res) => {
     try {
@@ -70,13 +71,11 @@ const signup = async (req, res) => {
 
         const userCreated = await usersCollection.insertOne(newUser);
 
-        console.log(userCreated);
-
         await db.collection('usercart').insertOne({ userId: userCreated.insertedId, products: [] });
 
         res.status(200).json({ message: "User registered successfully" });
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).json({ error: "Internal server error" });
     }
 }
@@ -99,18 +98,93 @@ const getAllProducts = async (req, res) => {
 const getUserCart = async (req, res) => {
     try {
         const db = getDb();
-        const userId = req.user._id;
-        console.log(req.user)
-        const userCart = await db.collection("usercart").findOne({ userId: userId });
+        const userId = new ObjectId(req.user._id);
+
+        const userCart = await db.collection("usercart").aggregate([
+            {
+                $match: { userId: new ObjectId(userId) } // Make sure userId is an ObjectId too
+            },
+            {
+                $unwind: "$products"
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    let: { productIdAsString: "$products.product" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ["$_id", { $toObjectId: "$$productIdAsString" }]
+                                }
+                            }
+                        }
+                    ],
+                    as: "productData"
+                }
+            },
+            {
+                $unwind: "$productData"
+            },
+            {
+                $addFields: {
+                    productWithQuantity: {
+                        $mergeObjects: [
+                            "$productData",
+                            { quantity: "$products.quantity" }
+                        ]
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    userId: { $first: "$userId" },
+                    products: { $push: "$productWithQuantity" }
+                }
+            }
+        ]).toArray();
 
         res.status(200).json({
             message: "User cart fetched successfully",
-            userCart
+            userCart: userCart[0] || {}
         });
+
     } catch (error) {
         console.error("Error fetching user cart:", error);
         res.status(500).json({ message: "Server error while fetching user cart" });
     }
 };
 
-module.exports = { login, signup, getAllProducts, getUserCart }
+
+
+const updateCart = async (req, res) => {
+    try {
+        const { products } = req.body;
+
+        console.log(products);
+
+        if (!Array.isArray(products)) {
+            return res.status(400).json({ message: "Products must be an array" });
+        }
+
+        const db = getDb();
+        const userId = req.user._id;
+
+        const result = await db.collection("usercart").updateOne(
+            { userId: new ObjectId(userId) },
+            { $set: { products } },
+            { upsert: true }
+        );
+
+        res.json({
+            message: "Cart updated successfully",
+            result
+        });
+    } catch (error) {
+        console.error("Error updating cart:", error);
+        res.status(500).json({ message: "Server error while updating cart" });
+    }
+};
+
+module.exports = { login, signup, getAllProducts, getUserCart, updateCart }

@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import { getAllProducts } from '../../services/services';
-// import { useNavigate } from 'react-router-dom';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -13,12 +12,11 @@ const ProductList = () => {
     priceRange: ''
   });
   const [showFilters, setShowFilters] = useState(false);
-  // const navigate = useNavigate();
 
   useEffect(() => {
     async function initProductList() {
       const res = await getAllProducts();
-      const products = res.data.products;
+      const products = res.products;
       setProducts(products);
       setFilteredProducts(products);
       setLoading(false);

@@ -37,7 +37,7 @@ const getAllProducts = async () => {
         const res = await axios.get(`${API_URL}/getproducts`, {
             withCredentials: true
         });
-        return res;
+        return res.data;
     } catch (err) {
         console.log("Error getting products", err);
     }
@@ -48,7 +48,7 @@ const getUserCart = async () => {
         const res = await axios.get(`${API_URL}/getusercart`, {
             withCredentials: true
         });
-        return res;
+        return res.data;
     } catch (err) {
         console.log("Error while getting user cart data", err);
     }
@@ -56,9 +56,19 @@ const getUserCart = async () => {
 
 const updateUserCart = async (data) => {
     try {
-        console.log(data);
-        const res = await axios.patch(`/updateusercart/${productId}`);
-        return res;
+        const products = data.map(p => {
+            return {
+                product: p._id,
+                quantity: p.quantity
+            }
+        });
+
+        console.log("p:", products)
+        
+        const res = await axios.patch(`${API_URL}/updateusercart`, { products: products }, {
+            withCredentials: true
+        });
+        return res.data;
     } catch (err) {
         console.log("Error while updating the cart", err);
     }

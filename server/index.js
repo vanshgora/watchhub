@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const { connectToDB } = require("./dbconfig");
-const { login, signup, getAllProducts, getUserCart } = require("./controllers");
+const { login, signup, getAllProducts, getUserCart, updateCart } = require("./controllers");
 const authMiddleware = require("./middlewares");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
 
 app.post("/login", login);
 app.post("/signup", signup);
-app.patch("/updateusercart", authMiddleware, login);
+app.patch("/updateusercart", authMiddleware, updateCart);
 app.get("/getproducts", authMiddleware, getAllProducts);
 app.get("/getusercart", authMiddleware, getUserCart);
 
