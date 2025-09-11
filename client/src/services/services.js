@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = 'https://occupied-they-shared-successfully.trycloudflare.com'
+const API_URL = 'https://duke-engineering-officer-naval.trycloudflare.com'
 
 const signup = async (data) => {
     try {
