@@ -15,11 +15,15 @@ const ProductList = () => {
 
   useEffect(() => {
     async function initProductList() {
-      const res = await getAllProducts();
-      const products = res.products;
-      setProducts(products);
-      setFilteredProducts(products);
-      setLoading(false);
+      try {
+        const res = await getAllProducts();
+        const products = res.products;
+        setProducts(products);
+        setFilteredProducts(products);
+        setLoading(false);
+      } catch (err) {
+        console.log(err)
+      }
     }
 
     initProductList();
